@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import Container from '@material-ui/core/Container';
 import { makeStyles } from '@material-ui/styles';
 
+import * as ChessJS from 'chess.js';
+
+const Chess = typeof ChessJS === "function" ? ChessJS : ChessJS.Chess;
 const pieces = require('../game/pieces.js')
 const { black, white, open } = pieces.pieces
 
@@ -99,6 +102,8 @@ const useStyles = makeStyles(() => ({
 }))
 const Board = () => {
   const classes = useStyles();
+  const [boardState, setBoardState] = useState(new Chess());
+  const [boardStateFen, setBoardStateFen] = useState(boardState.fen());
 
   const boardAsArray = () => {
     let array = []
@@ -111,12 +116,21 @@ const Board = () => {
     return array;
   }
 
-  
-
   const [position, setPosition] = useState(boardAsArray())
+
+  const makeMove = () => {
+    if (!boardState.game_over()) {
+      const moves = boardState.moves();
+      const move = moves[Math.floor(Math.random() * moves.length)];
+      boardState.move(move);
+      setBoardState(boardState);
+      setBoardStateFen(boardState.fen())
+    }
+  }
 
   return (
     <Container className={classes.root}>
+      <p onClick={() => makeMove()}>{boardStateFen}</p>
       <p id='h'>
         [<span id={1}>{position[0][0]}</span>]
         [<span id={2}>{position[0][1]}</span>]
