@@ -6,90 +6,91 @@ import * as ChessJS from 'chess.js';
 
 const Chess = typeof ChessJS === "function" ? ChessJS : ChessJS.Chess;
 const pieces = require('../game/pieces.js')
-const { black, white, open } = pieces.pieces
+const { R, r, N, n, B, b, Q, q, K, k, P, p, open } = pieces.pieces
 
-const board = {
-  1: {
-    1: white.r,
-    2: white.n,
-    3: white.b,
-    4: white.q,
-    5: white.k,
-    6: white.b,
-    7: white.n,
-    8: white.r,
-  },
-  2: {
-    1: white.p,
-    2: white.p,
-    3: white.p,
-    4: white.p,
-    5: white.p,
-    6: white.p,
-    7: white.p,
-    8: white.p,
-  },
-  3: {
-    1: open,
-    2: open,
-    3: open,
-    4: open,
-    5: open,
-    6: open,
-    7: open,
-    8: open,
-  },
-  4: {
-    1: open,
-    2: open,
-    3: open,
-    4: open,
-    5: open,
-    6: open,
-    7: open,
-    8: open,
-  },
-  5: {
-    1: open,
-    2: open,
-    3: open,
-    4: open,
-    5: open,
-    6: open,
-    7: open,
-    8: open,
-  },
-  6: {
-    1: open,
-    2: open,
-    3: open,
-    4: open,
-    5: open,
-    6: open,
-    7: open,
-    8: open,
-  },
-  7: {
-    1: black.p,
-    2: black.p,
-    3: black.p,
-    4: black.p,
-    5: black.p,
-    6: black.p,
-    7: black.p,
-    8: black.p,
-  },
-  8: {
-    1: black.r,
-    2: black.n,
-    3: black.b,
-    4: black.q,
-    5: black.k,
-    6: black.b,
-    7: black.n,
-    8: black.r,
-  },
-}
+const board = [
+  [
+    r,
+    n,
+    b,
+    q,
+    k,
+    b,
+    n,
+    r,
+  ],
+  [
+    p,
+    p,
+    p,
+    p,
+    p,
+    p,
+    p,
+    p,
+  ],
+  [
+    open,
+    open,
+    open,
+    open,
+    open,
+    open,
+    open,
+    open,
+  ],
+  [
+    open,
+    open,
+    open,
+    open,
+    open,
+    open,
+    open,
+    open,
+  ],
+  [
+    open,
+    open,
+    open,
+    open,
+    open,
+    open,
+    open,
+    open,
+  ],
+  [
+    open,
+    open,
+    open,
+    open,
+    open,
+    open,
+    open,
+    open,
+  ],
+  [
+    P,
+    P,
+    P,
+    P,
+    P,
+    P,
+    P,
+    P,
+  ],
+  [
+    R,
+    N,
+    B,
+    Q,
+    K,
+    B,
+    N,
+    R,
+  ],
+]
+console.log(board)
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -102,21 +103,32 @@ const useStyles = makeStyles(() => ({
 }))
 const Board = () => {
   const classes = useStyles();
-  const [boardState, setBoardState] = useState(new Chess());
+  const [boardState, setBoardState] = useState(new Chess('1nq1kb1r/r1pppbp1/p4n2/1p3p1p/1PNQP3/3B4/P1PP1PPP/R1B1K1NR w KQk - 8 11'));
   const [boardStateFen, setBoardStateFen] = useState(boardState.fen());
 
-  const boardAsArray = () => {
-    let array = []
-    for (let i = 1; i <= Object.keys(board).length; i++) {
-      array.push([])
-      for (let j = 1; j <= Object.keys(board[i]).length; j++) {
-        array[i-1].push(board[i][j])
+  const fenToArray = () => {
+    const arr = []
+    let fen = boardState.fen().split(' ')[0];
+    fen = fen.split('/')
+    for (let row = 0; row < fen.length; row++) {
+      for (let col = 0; col < fen[row].length; col++) {
+        if(parseInt(fen[row][col])) {
+          const whiteSpace = parseInt(fen[row][col]);
+          for (let i = 0; i < whiteSpace; i++) {
+            arr.push(open);
+            col++;
+          }
+        } else {
+          arr.push(fen[row][col])
+        }
       }
     }
-    return array;
+    return arr;
   }
+  fenToArray()
 
-  const [position, setPosition] = useState(boardAsArray())
+  const [position, setPosition] = useState(fenToArray())
+  console.log(position)
 
   const makeMove = () => {
     if (!boardState.game_over()) {
@@ -128,10 +140,13 @@ const Board = () => {
     }
   }
 
+  const boardArray = boardState.board()
+  console.log(boardArray)
+
   return (
     <Container className={classes.root}>
       <p onClick={() => makeMove()}>{boardStateFen}</p>
-      <p id='h'>
+      {/* <p id='h'>
         [<span id={1}>{position[0][0]}</span>]
         [<span id={2}>{position[0][1]}</span>]
         [<span id={3}>{position[0][2]}</span>]
@@ -210,7 +225,7 @@ const Board = () => {
         [<span id={6}>{position[7][5]}</span>]
         [<span id={7}>{position[7][6]}</span>]
         [<span id={8}>{position[7][7]}</span>]
-      </p>
+      </p> */}
     </Container>
   )
 }
